@@ -1,0 +1,23 @@
+{
+  "routes": [
+    {
+      // Our Blazor pages have authentication via the [Authorize] attribute (in _Imports.razor).
+      // Blazor's auth routes are at authentication/*, so allow anonymous access to them.
+      // FYI, Azure Static Web App's built-in auth is at .auth/
+      "route": "authentication/*",
+      "allowedRoles": [ "anonymous" ]
+    },
+    {
+      // Our API is an Azure function which is proxied on the "api" route. We don't want to allow anonymous access! We need to specify that calls to api/* are authenticated.
+      // Let's lock down the whole site, so that requests to any page will need SWA auth, which is then passed on to our api/* calls.
+      "route": "/*",
+      "allowedRoles": [ "authenticated" ]
+    }
+  ],
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/.auth/login/aad"
+    }
+  }
+}
