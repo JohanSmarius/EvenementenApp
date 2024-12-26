@@ -17,6 +17,9 @@
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.20.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
