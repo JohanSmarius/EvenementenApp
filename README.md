@@ -1,1 +1,2 @@
 # EvenementenApp
+This app is for a medical first aid volunteer charity. This charity gets asked to supply medical first aid volunteers for community events. Events can last an entire year or be a one day event. Events must therefore be recursive. Events will be split in shifts. On every shift a number of volunteers can be assigned. The coordinator must be able to enter new events and assign volunteers to the shift.
