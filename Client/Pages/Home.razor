@@ -1,7 +1,73 @@
-﻿@page "/"
+@page "/"
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject HttpClient Http
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Events Overview</h1>
 
-Welcome to your new app.
+@if (events == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickGrid Items="events" RowClass="GetRowClass">
+        <PropertyColumn Property="@(e => e.Name)" Title="Event Name" />
+        <PropertyColumn Property="@(e => e.CustomerName)" Title="Customer Name" />
+        <PropertyColumn Property="@(e => e.Address)" Title="Address" />
+        <PropertyColumn Property="@(e => e.BeginDate)" Title="Begin Date" />
+        <PropertyColumn Property="@(e => e.EndDate)" Title="End Date" />
+        <TemplateColumn Title="Shifts">
+            @context.Shifts.Count
+        </TemplateColumn>
+        <TemplateColumn Title="Volunteers">
+            @context.AssignedVolunteers.Count
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private List<Event>? events;
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await Http.GetFromJsonAsync<List<Event>>("api/events");
+    }
+
+    private string GetRowClass(Event e)
+    {
+        return e.ChildEvents.Any() ? "has-child-events" : string.Empty;
+    }
+
+    public class Event
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string CustomerName { get; set; }
+        public string Address { get; set; }
+        public string BeginDate { get; set; }
+        public string EndDate { get; set; }
+        public List<Event> ChildEvents { get; set; }
+        public List<Shift> Shifts { get; set; }
+        public List<Volunteer> AssignedVolunteers { get; set; }
+    }
+
+    public class Shift
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string BeginTime { get; set; }
+        public string EndTime { get; set; }
+        public List<Volunteer> AssignedVolunteers { get; set; }
+    }
+
+    public class Volunteer
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+}
