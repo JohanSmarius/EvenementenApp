@@ -11,31 +11,59 @@
 
 <h1>Overzicht evenementen</h1>
 
-@if (happenings == null)
+<div>
+    <label>Filter op naam evenement: </label>
+    <input @bind="nameFilter" @bind:event="oninput" style="display: block; margin-bottom: 10px;" />
+    <label>Filter op klantnaam: </label>
+    <input @bind="customerNameFilter" @bind:event="oninput" style="display: block;" />
+</div>
+
+@if (filteredHappenings == null)
 {
     <p><em>Laden...</em></p>
 }
 else
 {
-    <QuickGrid Items="happenings.AsQueryable()" TGridItem="Happening" Class="grid">
-        <PropertyColumn Property="@(e => e.Name)" Title="Naam evenement" />
-        <PropertyColumn Property="@(e => e.CustomerName)" Title="Opdrachtgever" />
-        <PropertyColumn Property="@(e => e.Address)" Title="Adres" />
-        <PropertyColumn Property="@(e => e.BeginDate)" Title="Begindatum" />
-        <PropertyColumn Property="@(e => e.EndDate)" Title="Einddatum" />
+    <QuickGrid Items="filteredHappenings.AsQueryable()" TGridItem="Happening" Class="grid">
+        <PropertyColumn Property="@(e => e.Name)" Title="Naam evenement" Sortable="true" />
+        <PropertyColumn Property="@(e => e.CustomerName)" Title="Opdrachtgever" Sortable="true" />
+        <PropertyColumn Property="@(e => e.Address)" Title="Adres" Sortable="true" />
+        <PropertyColumn Property="@(e => e.BeginDate)" Title="Begindatum" Sortable="true" />
+        <PropertyColumn Property="@(e => e.EndDate)" Title="Einddatum" Sortable="true" />
         <TemplateColumn Title="Diensten">
             @context.Shifts.Count
         </TemplateColumn>
-     </QuickGrid>
+    </QuickGrid>
 }
 
 @code {
     private List<Happening>? happenings = null;
+    private List<Happening>? filteredHappenings = null;
+    private string nameFilter = string.Empty;
+    private string customerNameFilter = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         happenings = await Http.GetFromJsonAsync<List<Happening>>("api/events");
+        FilterHappenings();
     }
 
+    private void FilterHappenings()
+    {
+        if (happenings == null)
+        {
+            filteredHappenings = null;
+            return;
+        }
 
+        filteredHappenings = happenings
+            .Where(h => h.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase) &&
+                        h.CustomerName.Contains(customerNameFilter, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    private void OnFilterChanged(ChangeEventArgs e)
+    {
+        FilterHappenings();
+    }
 }
