@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Home</PageTitle>
 
@@ -17,6 +18,8 @@
     <label>Filter op klantnaam: </label>
     <input @bind="customerNameFilter" @bind:event="oninput" style="display: block;" />
 </div>
+
+<button class="btn btn-primary" @onclick="NavigateToAddEvent">Add Event</button>
 
 @if (filteredHappenings == null)
 {
@@ -65,5 +68,10 @@ else
     private void OnFilterChanged(ChangeEventArgs e)
     {
         FilterHappenings();
+    }
+
+    private void NavigateToAddEvent()
+    {
+        Navigation.NavigateTo("/addevent");
     }
 }

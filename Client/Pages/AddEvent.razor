@@ -1,0 +1,59 @@
+@page "/addevent"
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Add Event</PageTitle>
+
+<h3>Add Event</h3>
+
+<EditForm Model="@newEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="newEvent.Name" />
+    </div>
+    <div class="form-group">
+        <label for="customerName">Customer Name</label>
+        <InputText id="customerName" class="form-control" @bind-Value="newEvent.CustomerName" />
+    </div>
+    <div class="form-group">
+        <label for="address">Address</label>
+        <InputText id="address" class="form-control" @bind-Value="newEvent.Address" />
+    </div>
+    <div class="form-group">
+        <label for="beginDate">Begin Date</label>
+        <InputDate id="beginDate" class="form-control" @bind-Value="newEvent.BeginDate" />
+    </div>
+    <div class="form-group">
+        <label for="endDate">End Date</label>
+        <InputDate id="endDate" class="form-control" @bind-Value="newEvent.EndDate" />
+    </div>
+    <div class="form-group">
+        <label for="numberOfVolunteersNeededPerShift">Number of Volunteers Needed Per Shift</label>
+        <InputNumber id="numberOfVolunteersNeededPerShift" class="form-control" @bind-Value="newEvent.NumberOfVolunteersNeededPerShift" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Event</button>
+</EditForm>
+
+@code {
+    private Happening newEvent = new Happening();
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PostAsJsonAsync("api/events", newEvent);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+}

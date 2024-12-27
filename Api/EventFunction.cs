@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Api.Services;
+using Shared;
 
 namespace Api
 {
@@ -30,7 +31,20 @@ namespace Api
             var events = await _eventService.GetEventsAsync();
             return new OkObjectResult(events);
         }
-    }
 
-    
+        [Function("AddEvent")]
+        public async Task<IActionResult> AddEvent([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+        {
+            _logger.LogInformation("C# HTTP trigger function processed a request to add an event.");
+
+            var newEvent = await req.ReadFromJsonAsync<Happening>();
+            if (newEvent == null)
+            {
+                return new BadRequestObjectResult("Invalid event data.");
+            }
+
+            await _eventService.AddEventAsync(newEvent);
+            return new OkObjectResult(newEvent);
+        }
+    }
 }
