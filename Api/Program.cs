@@ -15,8 +15,10 @@ builder.Services
 
 builder.Services.AddSingleton<HappeningService>(_ =>
 {
-    var cosmosClient = new CosmosClient(
-        builder.Configuration["ConnectionStrings:CosmosDBConnection"]);
+    var connectionString = string.IsNullOrEmpty(builder.Configuration["ConnectionStrings:CosmosDBConnection"]) ? 
+        builder.Configuration["ConnectionStrings_CosmosDBConnection"] : builder.Configuration["ConnectionStrings:CosmosDBConnection"];
+
+    var cosmosClient = new CosmosClient(connectionString);
     return new HappeningService(cosmosClient);
 });
 
