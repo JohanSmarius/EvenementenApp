@@ -9,6 +9,6 @@
 
         public int NumberOfVolunteersNeeded { get; set; }
 
-        public List<Volunteer> AssignedVolunteers { get; set; }
+        public List<Volunteer> AssignedVolunteers { get; set; } = new List<Volunteer>();
     }
 }
