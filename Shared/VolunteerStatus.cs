@@ -8,6 +8,7 @@ namespace Shared
 {
     public enum VolunteerStatus
     {
+        NotInvited,
         Invited,
         Accepted,
         Rejected,

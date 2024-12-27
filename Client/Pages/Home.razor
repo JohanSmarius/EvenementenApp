@@ -17,19 +17,16 @@
 }
 else
 {
-    <QuickGrid Items="happenings.AsQueryable()" RowClass="GetRowClass" TGridItem="Happening" Class="grid">
+    <QuickGrid Items="happenings.AsQueryable()" TGridItem="Happening" Class="grid">
         <PropertyColumn Property="@(e => e.Name)" Title="Naam evenement" />
         <PropertyColumn Property="@(e => e.CustomerName)" Title="Opdrachtgever" />
         <PropertyColumn Property="@(e => e.Address)" Title="Adres" />
         <PropertyColumn Property="@(e => e.BeginDate)" Title="Begindatum" />
         <PropertyColumn Property="@(e => e.EndDate)" Title="Einddatum" />
-@*         <TemplateColumn Title="Diensten">
+        <TemplateColumn Title="Diensten">
             @context.Shifts.Count
         </TemplateColumn>
-        <TemplateColumn Title="Aantal posters">
-            @context.AssignedVolunteers.Count
-        </TemplateColumn>
- *@    </QuickGrid>
+     </QuickGrid>
 }
 
 @code {
@@ -40,9 +37,5 @@ else
         happenings = await Http.GetFromJsonAsync<List<Happening>>("api/events");
     }
 
-    private string GetRowClass(Happening e)
-    {
-        return e.ChildEvents.Any() ? "has-child-events" : string.Empty;
-    }
 
 }
