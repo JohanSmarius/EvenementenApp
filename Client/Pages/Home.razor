@@ -35,10 +35,10 @@ else
         <PropertyColumn Property="@(e => e.BeginDate)" Title="Begindatum" Sortable="true" />
         <PropertyColumn Property="@(e => e.EndDate)" Title="Einddatum" Sortable="true" />
         <TemplateColumn Title="Actions">
-            <Template>
+            <div class="btn-group">
                 <button class="btn btn-primary" @onclick="() => NavigateToEditEvent(context)">Edit</button>
                 <button class="btn btn-danger" @onclick="() => SoftDeleteEvent(context)">Delete</button>
-            </Template>
+            </div>
         </TemplateColumn>
     </QuickGrid>
 }

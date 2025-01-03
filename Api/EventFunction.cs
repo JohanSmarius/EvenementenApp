@@ -24,8 +24,14 @@ namespace Api
         }
 
         [Function("Events")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Events/{id?}")] HttpRequest req, Guid? id)
         {
+            if (id is not null)
+            {
+                var eventById = await _eventService.GetEventByIdAsync(id.Value);
+                return new OkObjectResult(eventById);
+            }
+
             var events = await _eventService.GetEventsAsync();
             return new OkObjectResult(events);
         }

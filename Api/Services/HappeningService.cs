@@ -21,7 +21,7 @@ namespace Api.Services
 
         public async Task<List<Happening>> GetEventsAsync()
         {
-            var query = new QueryDefinition("SELECT * FROM c");
+            var query = new QueryDefinition("SELECT * FROM c where c.IsDeleted = false");
             var iterator = _container.GetItemQueryIterator<Happening>(query);
             var results = new List<Happening>();
             while (iterator.HasMoreResults)
@@ -30,6 +30,20 @@ namespace Api.Services
                 results.AddRange(response.ToList());
             }
             return results;
+        }
+
+        // Create a get method for 1 event by id
+        public async Task<Happening> GetEventByIdAsync(Guid eventId)
+        {
+            try
+            {
+                var eventById = await _container.ReadItemAsync<Happening>(eventId.ToString(), new PartitionKey(eventId.ToString()));
+                return eventById.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
         }
 
         public async Task AddEventAsync(Happening newEvent)
