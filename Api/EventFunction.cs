@@ -42,5 +42,31 @@ namespace Api
             await _eventService.AddEventAsync(newEvent);
             return new OkObjectResult(newEvent);
         }
+
+        [Function("UpdateEvent")]
+        public async Task<IActionResult> UpdateEvent([HttpTrigger(AuthorizationLevel.Anonymous, "put")] HttpRequest req)
+        {
+            var updatedEvent = await req.ReadFromJsonAsync<Happening>();
+            if (updatedEvent == null)
+            {
+                return new BadRequestObjectResult("Invalid event data.");
+            }
+
+            await _eventService.UpdateEventAsync(updatedEvent);
+            return new OkObjectResult(updatedEvent);
+        }
+
+        [Function("SoftDeleteEvent")]
+        public async Task<IActionResult> SoftDeleteEvent([HttpTrigger(AuthorizationLevel.Anonymous, "delete")] HttpRequest req)
+        {
+            var eventId = req.Query["id"];
+            if (string.IsNullOrEmpty(eventId))
+            {
+                return new BadRequestObjectResult("Invalid event ID.");
+            }
+
+            await _eventService.SoftDeleteEventAsync(Guid.Parse(eventId));
+            return new OkObjectResult($"Event with ID {eventId} has been soft deleted.");
+        }
     }
 }

@@ -1,0 +1,88 @@
+@page "/editevent/{id:guid}"
+
+@using global::Shared
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ILogger<EditEvent> Logger
+
+<PageTitle>Edit Event</PageTitle>
+
+<h3>Edit Event</h3>
+
+@if (eventToEdit == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@eventToEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Event Name</label>
+            <InputText id="name" class="form-control" @bind-Value="eventToEdit.Name" />
+        </div>
+        <div class="form-group">
+            <label for="customerName">Customer Name</label>
+            <InputText id="customerName" class="form-control" @bind-Value="eventToEdit.CustomerName" />
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <InputText id="address" class="form-control" @bind-Value="eventToEdit.Address" />
+        </div>
+        <div class="form-group">
+            <label for="beginDate">Begin Date</label>
+            <InputDate id="beginDate" class="form-control" @bind-Value="eventToEdit.BeginDate" Type="InputDateType.DateTimeLocal" />
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <InputDate id="endDate" class="form-control" @bind-Value="eventToEdit.EndDate" Type="InputDateType.DateTimeLocal" />
+        </div>
+        <div class="form-group">
+            <label for="numberOfVolunteersNeededPerShift">Number of Volunteers Needed Per Shift</label>
+            <InputNumber id="numberOfVolunteersNeededPerShift" class="form-control" @bind-Value="eventToEdit.NumberOfVolunteersNeededPerShift" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid id { get; set; }
+    private Happening? eventToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            eventToEdit = await Http.GetFromJsonAsync<Happening>($"api/events/{id}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading event");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync("api/updateevent", eventToEdit);
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error updating event");
+        }
+    }
+}

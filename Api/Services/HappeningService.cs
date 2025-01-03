@@ -37,5 +37,20 @@ namespace Api.Services
             newEvent.id = Guid.NewGuid();
             await _container.CreateItemAsync(newEvent, new PartitionKey(newEvent.id.ToString()));
         }
+
+        public async Task UpdateEventAsync(Happening updatedEvent)
+        {
+            await _container.UpsertItemAsync(updatedEvent, new PartitionKey(updatedEvent.id.ToString()));
+        }
+
+        public async Task SoftDeleteEventAsync(Guid eventId)
+        {
+            var eventToDelete = await _container.ReadItemAsync<Happening>(eventId.ToString(), new PartitionKey(eventId.ToString()));
+            if (eventToDelete != null)
+            {
+                eventToDelete.Resource.IsDeleted = true;
+                await _container.UpsertItemAsync(eventToDelete.Resource, new PartitionKey(eventId.ToString()));
+            }
+        }
     }
 }
