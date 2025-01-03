@@ -46,6 +46,30 @@ else
             <InputNumber id="numberOfVolunteersNeededPerShift" class="form-control" @bind-Value="eventToEdit.NumberOfVolunteersNeededPerShift" />
         </div>
 
+        <h4>Shifts</h4>
+        @foreach (var shift in eventToEdit.Shifts)
+        {
+            <div class="shift">
+                <div class="form-group">
+                    <label for="shiftName">Shift Name</label>
+                    <InputText id="shiftName" class="form-control" @bind-Value="shift.Name" />
+                </div>
+                <div class="form-group">
+                    <label for="beginTime">Begin Time</label>
+                    <InputText id="beginTime" class="form-control" @bind-Value="shift.BeginTime" />
+                </div>
+                <div class="form-group">
+                    <label for="endTime">End Time</label>
+                    <InputText id="endTime" class="form-control" @bind-Value="shift.EndTime" />
+                </div>
+                <div class="form-group">
+                    <label for="numberOfVolunteersNeeded">Number of Volunteers Needed</label>
+                    <InputNumber id="numberOfVolunteersNeeded" class="form-control" @bind-Value="shift.NumberOfVolunteersNeeded" />
+                </div>
+            </div>
+        }
+
+        <button type="button" class="btn btn-secondary" @onclick="AddShift">Add Shift</button>
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </EditForm>
 }
@@ -84,5 +108,10 @@ else
         {
             Logger.LogError(ex, "Error updating event");
         }
+    }
+
+    private void AddShift()
+    {
+        eventToEdit.Shifts.Add(new Shift());
     }
 }
