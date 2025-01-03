@@ -6,10 +6,10 @@
         public string Name { get; set; }
         public string CustomerName { get; set; }
         public string Address { get; set; }
-        public string BeginDate { get; set; }
-        public string EndDate { get; set; }
+        public DateTime BeginDate { get; set; }
+        public DateTime EndDate { get; set; }
         public int? NumberOfVolunteersNeededPerShift { get; set; }
-        public List<Shift> Shifts { get; set; }
+        public List<Shift> Shifts { get; set; } = new();
         
     }
 }

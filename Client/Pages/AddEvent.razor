@@ -1,0 +1,60 @@
+@page "/addevent"
+
+@using global::Shared
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Toevoegen evenement</PageTitle>
+
+<h3>Toevoegen evenement</h3>
+
+<EditForm Model="@newEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Naam evenement</label>
+        <InputText id="name" class="form-control" @bind-Value="newEvent.Name" />
+    </div>
+    <div class="form-group">
+        <label for="customerName">Naam klant</label>
+        <InputText id="customerName" class="form-control" @bind-Value="newEvent.CustomerName" />
+    </div>
+    <div class="form-group">
+        <label for="address">Adres</label>
+        <InputText id="address" class="form-control" @bind-Value="newEvent.Address" />
+    </div>
+    <div class="form-group">
+        <label for="beginDate">Begin datum</label>
+        <InputDate id="beginDate" class="form-control" @bind-Value="newEvent.BeginDate" Type="InputDateType.DateTimeLocal" />
+    </div>
+    <div class="form-group">
+        <label for="endDate">Einddatum</label>
+        <InputDate id="endDate" class="form-control" @bind-Value="newEvent.EndDate" Type="InputDateType.DateTimeLocal" />
+    </div>
+    <div class="form-group">
+        <label for="numberOfVolunteersNeededPerShift">Number of Volunteers Needed Per Shift</label>
+        <InputNumber id="numberOfVolunteersNeededPerShift" class="form-control" @bind-Value="newEvent.NumberOfVolunteersNeededPerShift" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Event</button>
+</EditForm>
+
+@code {
+    private Happening newEvent = new Happening();
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PostAsJsonAsync("api/addevent", newEvent);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+}

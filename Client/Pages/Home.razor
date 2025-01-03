@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Home</PageTitle>
 
@@ -13,10 +14,13 @@
 
 <div>
     <label>Filter op naam evenement: </label>
-    <input @bind="nameFilter" @bind:event="oninput" style="display: block; margin-bottom: 10px;" />
+    <InputText id="NameFilter" @bind-Value="NameFilter" style="display: block; margin-bottom: 10px;" />
     <label>Filter op klantnaam: </label>
-    <input @bind="customerNameFilter" @bind:event="oninput" style="display: block;" />
+    <InputText id="customerFilter" @bind-Value="CustomerNameFilter" style="display: block;" />
 </div>
+
+<button class="btn btn-primary" @onclick="FilterHappenings">Filter</button>
+<button class="btn btn-primary" @onclick="NavigateToAddEvent">Add Event</button>
 
 @if (filteredHappenings == null)
 {
@@ -30,17 +34,14 @@ else
         <PropertyColumn Property="@(e => e.Address)" Title="Adres" Sortable="true" />
         <PropertyColumn Property="@(e => e.BeginDate)" Title="Begindatum" Sortable="true" />
         <PropertyColumn Property="@(e => e.EndDate)" Title="Einddatum" Sortable="true" />
-        <TemplateColumn Title="Diensten">
-            @context.Shifts.Count
-        </TemplateColumn>
     </QuickGrid>
 }
 
 @code {
     private List<Happening>? happenings = null;
     private List<Happening>? filteredHappenings = null;
-    private string nameFilter = string.Empty;
-    private string customerNameFilter = string.Empty;
+    private string NameFilter { get; set; } = string.Empty;
+    private string CustomerNameFilter { get; set; }= string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,13 +58,13 @@ else
         }
 
         filteredHappenings = happenings
-            .Where(h => h.Name.Contains(nameFilter, StringComparison.OrdinalIgnoreCase) &&
-                        h.CustomerName.Contains(customerNameFilter, StringComparison.OrdinalIgnoreCase))
+            .Where(h => h.Name.Contains(NameFilter, StringComparison.OrdinalIgnoreCase) &&
+                        h.CustomerName.Contains(CustomerNameFilter, StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
 
-    private void OnFilterChanged(ChangeEventArgs e)
+    private void NavigateToAddEvent()
     {
-        FilterHappenings();
+        Navigation.NavigateTo("/addevent");
     }
 }
