@@ -1,0 +1,50 @@
+@page "/shiftlist/{eventId:guid}"
+
+@using global::Shared
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Shift List</PageTitle>
+
+<h3>Shift List</h3>
+
+@if (eventDetails == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h4>@eventDetails.Name</h4>
+    <ul>
+        @foreach (var shift in eventDetails.Shifts)
+        {
+            <li>
+                <strong>@shift.Name</strong> (@shift.BeginTime - @shift.EndTime)
+                <button class="btn btn-primary" @onclick="() => NavigateToEditShift(shift.Id)">Edit</button>
+            </li>
+        }
+    </ul>
+    <button class="btn btn-primary" @onclick="NavigateToAddShift">Add Shift</button>
+}
+
+@code {
+    [Parameter] public Guid eventId { get; set; }
+    private Happening? eventDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDetails = await Http.GetFromJsonAsync<Happening>($"api/events/{eventId}");
+    }
+
+    private void NavigateToAddShift()
+    {
+        Navigation.NavigateTo($"/addshift/{eventId}");
+    }
+
+    private void NavigateToEditShift(string shiftId)
+    {
+        Navigation.NavigateTo($"/editshift/{eventId}/{shiftId}");
+    }
+}
