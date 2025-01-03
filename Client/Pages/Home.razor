@@ -34,6 +34,12 @@ else
         <PropertyColumn Property="@(e => e.Address)" Title="Adres" Sortable="true" />
         <PropertyColumn Property="@(e => e.BeginDate)" Title="Begindatum" Sortable="true" />
         <PropertyColumn Property="@(e => e.EndDate)" Title="Einddatum" Sortable="true" />
+        <TemplateColumn Title="Actions">
+            <div class="btn-group">
+                <button class="btn btn-primary" @onclick="() => NavigateToEditEvent(context)">Edit</button>
+                <button class="btn btn-danger" @onclick="() => SoftDeleteEvent(context)">Delete</button>
+            </div>
+        </TemplateColumn>
     </QuickGrid>
 }
 
@@ -66,5 +72,24 @@ else
     private void NavigateToAddEvent()
     {
         Navigation.NavigateTo("/addevent");
+    }
+
+    private void NavigateToEditEvent(Happening happening)
+    {
+        Navigation.NavigateTo($"/editevent/{happening.id}");
+    }
+
+    private async Task SoftDeleteEvent(Happening happening)
+    {
+        var response = await Http.DeleteAsync($"api/softdeleteevent?id={happening.id}");
+        if (response.IsSuccessStatusCode)
+        {
+            happenings.Remove(happening);
+            FilterHappenings();
+        }
+        else
+        {
+            // Handle error
+        }
     }
 }

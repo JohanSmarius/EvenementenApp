@@ -10,6 +10,7 @@
         public DateTime EndDate { get; set; }
         public int? NumberOfVolunteersNeededPerShift { get; set; }
         public List<Shift> Shifts { get; set; } = new();
-        
+        public bool IsDeleted { get; set; } = false;
+
     }
 }
