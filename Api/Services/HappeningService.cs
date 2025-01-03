@@ -34,6 +34,7 @@ namespace Api.Services
 
         public async Task AddEventAsync(Happening newEvent)
         {
+            newEvent.id = Guid.NewGuid();
             await _container.CreateItemAsync(newEvent, new PartitionKey(newEvent.id.ToString()));
         }
     }
