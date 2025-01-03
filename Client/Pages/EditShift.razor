@@ -16,6 +16,7 @@
 }
 else
 {
+    <h4>@eventDetails.Name</h4>
     <EditForm Model="@shiftToEdit" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -26,11 +27,11 @@ else
         </div>
         <div class="form-group">
             <label for="beginTime">Begin Time</label>
-            <InputText id="beginTime" class="form-control" @bind-Value="shiftToEdit.BeginTime" />
+            <InputDate id="beginTime" class="form-control" @bind-Value="shiftToEdit.BeginTime" Type="InputDateType.DateTimeLocal" />
         </div>
         <div class="form-group">
             <label for="endTime">End Time</label>
-            <InputText id="endTime" class="form-control" @bind-Value="shiftToEdit.EndTime" />
+            <InputDate id="endTime" class="form-control" @bind-Value="shiftToEdit.EndTime" Type="InputDateType.DateTimeLocal" />
         </div>
         <div class="form-group">
             <label for="numberOfVolunteersNeeded">Number of Volunteers Needed</label>
@@ -45,10 +46,11 @@ else
     [Parameter] public Guid eventId { get; set; }
     [Parameter] public string shiftId { get; set; }
     private Shift? shiftToEdit;
+    private Happening? eventDetails;
 
     protected override async Task OnInitializedAsync()
     {
-        var eventDetails = await Http.GetFromJsonAsync<Happening>($"api/events/{eventId}");
+        eventDetails = await Http.GetFromJsonAsync<Happening>($"api/events/{eventId}");
         shiftToEdit = eventDetails?.Shifts.FirstOrDefault(s => s.Id == shiftId);
     }
 

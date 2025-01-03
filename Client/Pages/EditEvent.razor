@@ -56,11 +56,11 @@ else
                 </div>
                 <div class="form-group">
                     <label for="beginTime">Begin Time</label>
-                    <InputText id="beginTime" class="form-control" @bind-Value="shift.BeginTime" />
+                    <InputDate id="beginTime" class="form-control" @bind-Value="shift.BeginTime" Type="InputDateType.DateTimeLocal" />
                 </div>
                 <div class="form-group">
                     <label for="endTime">End Time</label>
-                    <InputText id="endTime" class="form-control" @bind-Value="shift.EndTime" />
+                    <InputDate id="endTime" class="form-control" @bind-Value="shift.EndTime" Type="InputDateType.DateTimeLocal" />
                 </div>
                 <div class="form-group">
                     <label for="numberOfVolunteersNeeded">Number of Volunteers Needed</label>
