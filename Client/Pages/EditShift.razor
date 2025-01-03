@@ -1,0 +1,69 @@
+@page "/editshift/{eventId:guid}/{shiftId:guid}"
+
+@using global::Shared
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Shift</PageTitle>
+
+<h3>Edit Shift</h3>
+
+@if (shiftToEdit == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h4>@eventDetails.Name</h4>
+    <EditForm Model="@shiftToEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Shift Name</label>
+            <InputText id="name" class="form-control" @bind-Value="shiftToEdit.Name" />
+        </div>
+        <div class="form-group">
+            <label for="beginTime">Begin Time</label>
+            <InputDate id="beginTime" class="form-control" @bind-Value="shiftToEdit.BeginTime" Type="InputDateType.DateTimeLocal" />
+        </div>
+        <div class="form-group">
+            <label for="endTime">End Time</label>
+            <InputDate id="endTime" class="form-control" @bind-Value="shiftToEdit.EndTime" Type="InputDateType.DateTimeLocal" />
+        </div>
+        <div class="form-group">
+            <label for="numberOfVolunteersNeeded">Number of Volunteers Needed</label>
+            <InputNumber id="numberOfVolunteersNeeded" class="form-control" @bind-Value="shiftToEdit.NumberOfVolunteersNeeded" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid eventId { get; set; }
+    [Parameter] public Guid shiftId { get; set; }
+    private Shift? shiftToEdit;
+    private Happening? eventDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDetails = await Http.GetFromJsonAsync<Happening>($"api/events/{eventId}");
+        shiftToEdit = eventDetails?.Shifts.FirstOrDefault(s => s.Id == shiftId);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PutAsJsonAsync($"api/events/{eventId}/shifts/{shiftId}", shiftToEdit);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo($"/shiftlist/{eventId}");
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+}

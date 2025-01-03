@@ -1,0 +1,67 @@
+@page "/addshift/{eventId:guid}"
+
+@using global::Shared
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Add Shift</PageTitle>
+
+<h3>Add Shift</h3>
+
+@if (eventDetails == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h4>@eventDetails.Name</h4>
+    <EditForm Model="@newShift" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Shift Name</label>
+            <InputText id="name" class="form-control" @bind-Value="newShift.Name" />
+        </div>
+        <div class="form-group">
+            <label for="beginTime">Begin Time</label>
+            <InputDate id="beginTime" class="form-control" @bind-Value="newShift.BeginTime" Type="InputDateType.DateTimeLocal" />
+        </div>
+        <div class="form-group">
+            <label for="endTime">End Time</label>
+            <InputDate id="endTime" class="form-control" @bind-Value="newShift.EndTime" Type="InputDateType.DateTimeLocal" />
+        </div>
+        <div class="form-group">
+            <label for="numberOfVolunteersNeeded">Number of Volunteers Needed</label>
+            <InputNumber id="numberOfVolunteersNeeded" class="form-control" @bind-Value="newShift.NumberOfVolunteersNeeded" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Shift</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid eventId { get; set; }
+    private Shift newShift = new Shift { Id = Guid.NewGuid() };
+    private Happening? eventDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDetails = await Http.GetFromJsonAsync<Happening>($"api/events/{eventId}");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Http.PostAsJsonAsync($"api/events/{eventId}/shifts", newShift);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo($"/shiftlist/{eventId}");
+        }
+        else
+        {
+            // Handle error
+        }
+    }
+}

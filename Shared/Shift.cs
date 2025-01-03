@@ -2,10 +2,10 @@
 {
     public class Shift
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public string BeginTime { get; set; }
-        public string EndTime { get; set; }
+        public DateTime BeginTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         public int NumberOfVolunteersNeeded { get; set; }
 

@@ -66,5 +66,15 @@ namespace Api.Services
                 await _container.UpsertItemAsync(eventToDelete.Resource, new PartitionKey(eventId.ToString()));
             }
         }
+
+        public async Task AddShiftToEventAsync(Guid eventId, Shift newShift)
+        {
+            var eventToUpdate = await GetEventByIdAsync(eventId);
+            if (eventToUpdate != null)
+            {
+                eventToUpdate.AddShift(newShift);
+                await UpdateEventAsync(eventToUpdate);
+            }
+        }
     }
 }

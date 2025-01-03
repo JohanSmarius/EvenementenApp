@@ -12,5 +12,9 @@
         public List<Shift> Shifts { get; set; } = new();
         public bool IsDeleted { get; set; } = false;
 
+        public void AddShift(Shift newShift)
+        {
+            Shifts.Add(newShift);
+        }
     }
 }
