@@ -43,9 +43,27 @@ else
     </QuickGrid>
 }
 
+@if (selectedHappening != null)
+{
+    <h2>Shifts for @selectedHappening.Name</h2>
+    <QuickGrid Items="selectedHappening.Shifts.AsQueryable()" TGridItem="Shift" Class="grid">
+        <PropertyColumn Property="@(s => s.Name)" Title="Shift Name" Sortable="true" />
+        <PropertyColumn Property="@(s => s.BeginTime)" Title="Begin Time" Sortable="true" />
+        <PropertyColumn Property="@(s => s.EndTime)" Title="End Time" Sortable="true" />
+        <PropertyColumn Property="@(s => s.NumberOfVolunteersNeeded)" Title="Volunteers Needed" Sortable="true" />
+        <TemplateColumn Title="Actions">
+            <div class="btn-group">
+                <button class="btn btn-primary" @onclick="() => NavigateToEditShift(selectedHappening.id, shift.Id)">Edit</button>
+            </div>
+        </TemplateColumn>
+    </QuickGrid>
+    <button class="btn btn-primary" @onclick="() => NavigateToAddShift(selectedHappening.id)">Add Shift</button>
+}
+
 @code {
     private List<Happening>? happenings = null;
     private List<Happening>? filteredHappenings = null;
+    private Happening? selectedHappening = null;
     private string NameFilter { get; set; } = string.Empty;
     private string CustomerNameFilter { get; set; }= string.Empty;
 
@@ -91,5 +109,15 @@ else
         {
             // Handle error
         }
+    }
+
+    private void NavigateToAddShift(Guid eventId)
+    {
+        Navigation.NavigateTo($"/addshift/{eventId}");
+    }
+
+    private void NavigateToEditShift(Guid eventId, Guid shiftId)
+    {
+        Navigation.NavigateTo($"/editshift/{eventId}/{shiftId}");
     }
 }

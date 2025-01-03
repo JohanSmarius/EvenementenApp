@@ -17,15 +17,17 @@
 else
 {
     <h4>@eventDetails.Name</h4>
-    <ul>
-        @foreach (var shift in eventDetails.Shifts)
-        {
-            <li>
-                <strong>@shift.Name</strong> (@shift.BeginTime - @shift.EndTime)
-                <button class="btn btn-primary" @onclick="() => NavigateToEditShift(shift.Id)">Edit</button>
-            </li>
-        }
-    </ul>
+    <QuickGrid Items="eventDetails.Shifts.AsQueryable()" TGridItem="Shift" Class="grid">
+        <PropertyColumn Property="@(s => s.Name)" Title="Shift Name" Sortable="true" />
+        <PropertyColumn Property="@(s => s.BeginTime)" Title="Begin Time" Sortable="true" />
+        <PropertyColumn Property="@(s => s.EndTime)" Title="End Time" Sortable="true" />
+        <PropertyColumn Property="@(s => s.NumberOfVolunteersNeeded)" Title="Volunteers Needed" Sortable="true" />
+        <TemplateColumn Title="Actions">
+            <div class="btn-group">
+                <button class="btn btn-primary" @onclick="() => NavigateToEditShift(context.Id)">Edit</button>
+            </div>
+        </TemplateColumn>
+    </QuickGrid>
     <button class="btn btn-primary" @onclick="NavigateToAddShift">Add Shift</button>
 }
 
@@ -43,7 +45,7 @@ else
         Navigation.NavigateTo($"/addshift/{eventId}");
     }
 
-    private void NavigateToEditShift(string shiftId)
+    private void NavigateToEditShift(Guid shiftId)
     {
         Navigation.NavigateTo($"/editshift/{eventId}/{shiftId}");
     }

@@ -59,6 +59,9 @@
                 <label for="numberOfVolunteersNeeded">Number of Volunteers Needed</label>
                 <InputNumber id="numberOfVolunteersNeeded" class="form-control" @bind-Value="shift.NumberOfVolunteersNeeded" />
             </div>
+            <div class="form-group">
+                <button class="btn btn-secondary" @onclick="() => NavigateToEditShift(shift.Id)">Edit Shift</button>
+            </div>
         </div>
     }
 
@@ -85,5 +88,10 @@
     private void AddShift()
     {
         newEvent.Shifts.Add(new Shift());
+    }
+
+    private void NavigateToEditShift(Guid shiftId)
+    {
+        Navigation.NavigateTo($"/editshift/{newEvent.id}/{shiftId}");
     }
 }

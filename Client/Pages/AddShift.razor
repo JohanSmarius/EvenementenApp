@@ -44,7 +44,7 @@ else
 
 @code {
     [Parameter] public Guid eventId { get; set; }
-    private Shift newShift = new Shift();
+    private Shift newShift = new Shift { Id = Guid.NewGuid() };
     private Happening? eventDetails;
 
     protected override async Task OnInitializedAsync()
