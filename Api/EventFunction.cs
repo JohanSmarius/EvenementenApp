@@ -96,7 +96,7 @@ namespace Api
                 return new NotFoundObjectResult("Event not found.");
             }
 
-            if (shift.BeginTime > shift.EndTime)
+            if (shift.BeginTime >= shift.EndTime)
             {
                 return new BadRequestObjectResult("Begin time must be before end time.");
             }
@@ -106,6 +106,7 @@ namespace Api
                 return new BadRequestObjectResult("Shift times must be within the event's boundaries.");
             }
 
+            shift.Id = Guid.NewGuid();
             eventToUpdate.Shifts.Add(shift);
             await _eventService.UpdateEventAsync(eventToUpdate);
 
