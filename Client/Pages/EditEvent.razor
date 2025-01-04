@@ -3,6 +3,9 @@
 @using global::Shared
 @using System.Net.Http
 @using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.QuickGrid
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ILogger<EditEvent> Logger
@@ -50,7 +53,7 @@ else
     </EditForm>
 
     <h3>Shifts</h3>
-    <QuickGrid Items="eventToEdit.Shifts">
+    <QuickGrid Items="eventToEdit.Shifts.AsQueryable()" TGridItem="Shift" class="Grid">
         <PropertyColumn Property="@(s => s.Name)" Title="Name" Sortable="true" />
         <PropertyColumn Property="@(s => s.BeginTime)" Title="Begin Time" Sortable="true" />
         <PropertyColumn Property="@(s => s.EndTime)" Title="End Time" Sortable="true" />
