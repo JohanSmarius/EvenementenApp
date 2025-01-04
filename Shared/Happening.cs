@@ -12,5 +12,19 @@
         public List<Shift> Shifts { get; set; } = new();
         public bool IsDeleted { get; set; } = false;
 
+        public void AddShift(Shift shift)
+        {
+            if (shift.BeginTime >= shift.EndTime)
+            {
+                throw new ArgumentException("Begin time must be before end time.");
+            }
+
+            if (shift.BeginTime < BeginDate || shift.EndTime > EndDate)
+            {
+                throw new ArgumentException("Shift times must be within the event's boundaries.");
+            }
+
+            Shifts.Add(shift);
+        }
     }
 }

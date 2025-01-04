@@ -74,5 +74,42 @@ namespace Api
             await _eventService.SoftDeleteEventAsync(Guid.Parse(eventId));
             return new OkObjectResult($"Event with ID {eventId} has been soft deleted.");
         }
+
+        [Function("AddShift")]
+        public async Task<IActionResult> AddShift([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "addshift")] HttpRequest req)
+        {
+            var eventId = req.Query["eventId"];
+            if (string.IsNullOrEmpty(eventId))
+            {
+                return new BadRequestObjectResult("Invalid event ID.");
+            }
+
+            var shift = await req.ReadFromJsonAsync<Shift>();
+            if (shift == null)
+            {
+                return new BadRequestObjectResult("Invalid shift data.");
+            }
+
+            var eventToUpdate = await _eventService.GetEventByIdAsync(Guid.Parse(eventId));
+            if (eventToUpdate == null)
+            {
+                return new NotFoundObjectResult("Event not found.");
+            }
+
+            if (shift.BeginTime > shift.EndTime)
+            {
+                return new BadRequestObjectResult("Begin time must be before end time.");
+            }
+
+            if (shift.BeginTime < eventToUpdate.BeginDate || shift.EndTime > eventToUpdate.EndDate)
+            {
+                return new BadRequestObjectResult("Shift times must be within the event's boundaries.");
+            }
+
+            eventToUpdate.Shifts.Add(shift);
+            await _eventService.UpdateEventAsync(eventToUpdate);
+
+            return new OkObjectResult(shift);
+        }
     }
 }
