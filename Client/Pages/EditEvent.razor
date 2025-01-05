@@ -58,6 +58,27 @@ else
         <PropertyColumn Property="@(s => s.BeginTime)" Title="Begin Time" Sortable="true" />
         <PropertyColumn Property="@(s => s.EndTime)" Title="End Time" Sortable="true" />
         <PropertyColumn Property="@(s => s.NumberOfVolunteersNeeded)" Title="Volunteers Needed" Sortable="true" />
+        <TemplateColumn Title="Volunteers">
+            <ul>
+                @foreach (var volunteer in context.AssignedVolunteers)
+                {
+                    <li>@volunteer.Name</li>
+                }
+            </ul>
+        </TemplateColumn>
+        <TemplateColumn Title="Actions">
+            <div class="form-group">
+                <label for="volunteers">Select Volunteers</label>
+                <InputSelect id="volunteers" class="form-control" @bind-Value="selectedVolunteerId">
+                    <option value="">Select a volunteer</option>
+                    @foreach (var volunteer in volunteers)
+                    {
+                        <option value="@volunteer.Id">@volunteer.Name</option>
+                    }
+                </InputSelect>
+                <button class="btn btn-primary" @onclick="() => InviteVolunteerToShift(context)">Invite</button>
+            </div>
+        </TemplateColumn>
     </QuickGrid>
 
     <button class="btn btn-primary" @onclick="NavigateToAddShift">Add Shift</button>
@@ -66,16 +87,19 @@ else
 @code {
     [Parameter] public Guid id { get; set; }
     private Happening? eventToEdit;
+    private List<Volunteer> volunteers = new List<Volunteer>();
+    private string selectedVolunteerId;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             eventToEdit = await Http.GetFromJsonAsync<Happening>($"api/events/{id}");
+            volunteers = await Http.GetFromJsonAsync<List<Volunteer>>("api/volunteers");
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error loading event");
+            Logger.LogError(ex, "Error loading event or volunteers");
         }
     }
 
@@ -102,5 +126,14 @@ else
     private void NavigateToAddShift()
     {
         Navigation.NavigateTo($"/addshift/{id}");
+    }
+
+    private void InviteVolunteerToShift(Shift shift)
+    {
+        var selectedVolunteer = volunteers.FirstOrDefault(v => v.Id == selectedVolunteerId);
+        if (selectedVolunteer != null)
+        {
+            shift.AssignedVolunteers.Add(selectedVolunteer);
+        }
     }
 }
