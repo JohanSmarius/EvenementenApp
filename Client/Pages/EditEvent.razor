@@ -59,6 +59,8 @@ else
         <PropertyColumn Property="@(s => s.EndTime)" Title="End Time" Sortable="true" />
         <PropertyColumn Property="@(s => s.NumberOfVolunteersNeeded)" Title="Volunteers Needed" Sortable="true" />
     </QuickGrid>
+
+    <button class="btn btn-primary" @onclick="NavigateToAddShift">Add Shift</button>
 }
 
 @code {
@@ -95,5 +97,10 @@ else
         {
             Logger.LogError(ex, "Error updating event");
         }
+    }
+
+    private void NavigateToAddShift()
+    {
+        Navigation.NavigateTo($"/addshift/{id}");
     }
 }
